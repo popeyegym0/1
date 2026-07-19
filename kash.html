@@ -1,3 +1,4 @@
+400
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
@@ -323,31 +324,15 @@
             right: auto; left: 3px; background: white;
         }
 
-        /* ── INSTALLMENT PANEL ── */
-        .installment-panel {
-            display: none;
-            background: linear-gradient(135deg, rgba(245,166,35,0.07), rgba(245,166,35,0.02));
-            border: 1px solid rgba(245,166,35,0.2);
-            border-radius: 20px; padding: 20px;
-            margin-bottom: 16px;
-            animation: fadeSlide 0.4s ease-out;
+        /* ── SCREENSHOT NOTICE ── */
+        .screenshot-notice {
+            display: flex; align-items: flex-start; gap: 14px;
+            background: rgba(245,166,35,0.08); border: 1px solid rgba(245,166,35,0.3);
+            border-radius: 16px; padding: 16px 18px; margin-bottom: 16px;
         }
-        .installment-panel.show { display: block; }
-        .installment-amounts {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
-            margin-top: 14px;
-        }
-        .amount-box {
-            background: var(--surface3); border-radius: 14px; padding: 14px 16px;
-            text-align: center; border: 1px solid var(--glass-border);
-        }
-        .amount-box.paid { border-color: rgba(37,211,102,0.25); background: rgba(37,211,102,0.06); }
-        .amount-box.remaining { border-color: rgba(220,20,60,0.25); background: rgba(220,20,60,0.06); }
-        .amount-box-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); margin-bottom: 6px; }
-        .amount-box-value { font-size: 1.4rem; font-weight: 900; }
-        .amount-box.paid .amount-box-value { color: var(--green); text-shadow: 0 0 10px var(--green-glow); }
-        .amount-box.remaining .amount-box-value { color: var(--red); text-shadow: 0 0 10px var(--red-glow); }
-        .amount-box-unit { font-size: 0.65rem; color: var(--text-muted); }
+        .screenshot-notice .notice-icon { font-size: 1.8rem; color: var(--gold); filter: drop-shadow(0 0 10px rgba(245,166,35,0.4)); flex-shrink: 0; }
+        .screenshot-notice .notice-text { font-size: 0.9rem; font-weight: 700; color: var(--text); line-height: 1.6; }
+        .screenshot-notice .notice-sub { font-size: 0.78rem; color: var(--text-muted); font-weight: 500; margin-top: 4px; }
 
         /* ── QR SECTION ── */
         .qr-section {
@@ -498,7 +483,6 @@
             .package-grid { grid-template-columns: 1fr; }
             .main { padding: 20px 14px 60px; }
             .field-row { grid-template-columns: 1fr; }
-            .installment-amounts { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -647,39 +631,6 @@
 
                     <hr class="field-divider">
 
-                    <!-- Installment Toggle -->
-                    <div class="toggle-row" id="installment-toggle" onclick="toggleInstallment()">
-                        <div class="toggle-info">
-                            <div class="toggle-icon-wrap"><i class="fas fa-layer-group"></i></div>
-                            <div>
-                                <div class="toggle-label">نظام القسط</div>
-                                <div class="toggle-sub">دفع جزء من المبلغ الآن والباقي لاحقاً</div>
-                            </div>
-                        </div>
-                        <div class="toggle-switch" id="toggle-switch"></div>
-                    </div>
-
-                    <!-- Installment Panel -->
-                    <div class="installment-panel" id="installment-panel">
-                        <div class="section-subtitle"><i class="fas fa-coins" style="color:var(--gold);"></i> &nbsp;تفاصيل القسط</div>
-                        <div class="input-group" style="margin-bottom:0;">
-                            <label class="input-label"><i class="fas fa-hand-holding-usd"></i> المبلغ المدفوع الآن</label>
-                            <input type="number" id="paid-amount" class="form-input" placeholder="أدخل المبلغ المدفوع" oninput="calcRemaining()" min="0">
-                        </div>
-                        <div class="installment-amounts" id="installment-amounts" style="display:none;">
-                            <div class="amount-box paid">
-                                <div class="amount-box-label">✅ المدفوع</div>
-                                <div class="amount-box-value" id="paid-display">0</div>
-                                <div class="amount-box-unit">جنيه</div>
-                            </div>
-                            <div class="amount-box remaining">
-                                <div class="amount-box-label">⏳ المتبقي</div>
-                                <div class="amount-box-value" id="remaining-display">0</div>
-                                <div class="amount-box-unit">جنيه</div>
-                            </div>
-                        </div>
-                    </div>
-
                 </div>
 
                 <!-- RENEW FIELDS -->
@@ -740,6 +691,15 @@
                         </button>
                     </div>
 
+                    <!-- Screenshot Notice -->
+                    <div class="screenshot-notice">
+                        <div class="notice-icon"><i class="fas fa-camera"></i></div>
+                        <div>
+                            <div class="notice-text">📸 بعد إتمام التحويل، التقط سكرين شوت لعملية التحويل وأرسله مع بياناتك عبر واتساب</div>
+                            <div class="notice-sub">يُرجى إرفاق صورة واضحة تُثبت إتمام عملية التحويل حتى يتم تفعيل اشتراكك بسرعة</div>
+                        </div>
+                    </div>
+
                     <div class="input-group">
                         <label class="input-label"><i class="fas fa-mobile-alt"></i> الرقم المحول منه</label>
                         <input type="text" id="sender-number" class="form-input" placeholder="ادخل رقم الموبايل أو المحفظة">
@@ -788,7 +748,6 @@
 
         /* ── APP STATE ── */
         let selectedBranch = '', selectedAction = '', selectedMethod = '', selectedPackage = null;
-        let installmentActive = false;
 
         const packages = {
             kurdy: [
@@ -872,8 +831,6 @@
             selectedPackage = packages[selectedBranch].find(p => p.id === pkgId);
             document.querySelectorAll('.package-card').forEach(c => c.classList.remove('active'));
             element.classList.add('active');
-            // Recalc remaining if installment active
-            if (installmentActive) calcRemaining();
         }
 
         /* ── AGE CALCULATOR ── */
@@ -894,30 +851,6 @@
             ageResult.classList.add('show');
         }
 
-        /* ── INSTALLMENT ── */
-        function toggleInstallment() {
-            installmentActive = !installmentActive;
-            const toggle = document.getElementById('installment-toggle');
-            const panel = document.getElementById('installment-panel');
-            toggle.classList.toggle('active', installmentActive);
-            panel.classList.toggle('show', installmentActive);
-            if (!installmentActive) {
-                document.getElementById('paid-amount').value = '';
-                document.getElementById('installment-amounts').style.display = 'none';
-            }
-        }
-
-        function calcRemaining() {
-            if (!selectedPackage) return;
-            const paid = parseFloat(document.getElementById('paid-amount').value) || 0;
-            const total = selectedPackage.num;
-            const remaining = Math.max(0, total - paid);
-
-            document.getElementById('paid-display').textContent = paid;
-            document.getElementById('remaining-display').textContent = remaining;
-            document.getElementById('installment-amounts').style.display = 'grid';
-        }
-
         /* ── GO TO PAYMENT ── */
         function goToPayment() {
             if (selectedAction === 'new') {
@@ -930,13 +863,6 @@
                 }
                 if (!phone) { shakeAlert('يرجى إدخال رقم الهاتف'); return; }
                 if (!subDate) { shakeAlert('يرجى تحديد تاريخ الاشتراك'); return; }
-                if (installmentActive) {
-                    const paid = parseFloat(document.getElementById('paid-amount').value);
-                    if (!paid || paid <= 0) { shakeAlert('يرجى إدخال المبلغ المدفوع'); return; }
-                    if (selectedPackage && paid > selectedPackage.num) {
-                        shakeAlert('المبلغ المدفوع أكبر من سعر الباقة'); return;
-                    }
-                }
             }
             if (selectedAction === 'renew' && !document.getElementById('membership-code').value.trim()) {
                 shakeAlert('يرجى إدخال كود العضوية'); return;
@@ -946,17 +872,6 @@
             const branchName = selectedBranch === 'kurdy' ? 'فرع الكردي' : 'فرع الجمالية';
             const actionName = selectedAction === 'new' ? 'اشتراك جديد' : 'تجديد اشتراك';
 
-            let installmentHtml = '';
-            if (installmentActive && selectedAction === 'new') {
-                const paid = parseFloat(document.getElementById('paid-amount').value) || 0;
-                const remaining = Math.max(0, selectedPackage.num - paid);
-                installmentHtml = `<span class="summary-sep">●</span>
-                <div class="summary-item"><i class="fas fa-layer-group" style="color:var(--gold);"></i>
-                <span class="summary-value" style="color:var(--green);">مدفوع: ${paid} ج</span></div>
-                <span class="summary-sep">●</span>
-                <div class="summary-item"><span class="summary-value" style="color:var(--red);">متبقي: ${remaining} ج</span></div>`;
-            }
-
             document.getElementById('summary-bar').innerHTML = `
                 <div class="summary-item"><i class="fas fa-map-marker-alt" style="color:var(--red);"></i><span class="summary-value">${branchName}</span></div>
                 <span class="summary-sep">●</span>
@@ -965,7 +880,6 @@
                 <div class="summary-item"><i class="fas fa-box" style="color:var(--blue);"></i><span class="summary-value">${selectedPackage.name}</span></div>
                 <span class="summary-sep">●</span>
                 <div class="summary-item"><span class="summary-value" style="color:var(--gold);">${selectedPackage.price}</span></div>
-                ${installmentHtml}
             `;
 
             document.getElementById('payment-details').style.display = 'none';
@@ -1028,20 +942,12 @@
                     return `${dd}/${m}/${y}`;
                 };
 
-                let installmentLine = '';
-                if (installmentActive) {
-                    const paid = parseFloat(document.getElementById('paid-amount').value) || 0;
-                    const remaining = Math.max(0, selectedPackage.num - paid);
-                    installmentLine = `\n💵 نظام القسط: مفعّل\n   ✅ المدفوع: ${paid} جنيه\n   ⏳ المتبقي: ${remaining} جنيه`;
-                }
-
                 userInfo =
                     `👤 الاسم: ${name}\n` +
                     `📱 الهاتف: ${phone}\n` +
                     `🎂 تاريخ الميلاد: ${fmtDate(birthDate)} (العمر: ${age})\n` +
                     `📅 تاريخ الاشتراك: ${fmtDate(subDate)}` +
-                    (notes ? `\n📝 ملاحظات: ${notes}` : '') +
-                    installmentLine;
+                    (notes ? `\n📝 ملاحظات: ${notes}` : '');
             } else {
                 userInfo = `🪪 كود العضوية: ${document.getElementById('membership-code').value}`;
             }
